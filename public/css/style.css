@@ -1,0 +1,251 @@
+/* ===============================================
+// ARQUIVO: public/css/style.css (Completo com Footer e Categorias)
+// =============================================== */
+
+/* --- ESTILOS DE NATAL (Sobrescrevendo Bootstrap) --- */
+body {
+    background-image: url('https://www.transparenttextures.com/patterns/snow.png');
+}
+body.bg-light {
+     background-image: url('https://www.transparenttextures.com/patterns/snow.png');
+     background-color: #f8f9fa !important;
+}
+.navbar.bg-dark, .banner-promocional.bg-dark, .footer-custom { /* Adicionado .footer-custom */
+    background-color: #2a7d2e !important; /* Verde-Pinheiro */
+}
+.navbar.bg-dark {
+    border-bottom: 3px solid #f0b400; /* Detalhe Dourado (só na navbar) */
+}
+.banner-promocional.bg-dark {
+    border-bottom: none;
+}
+.navbar-brand {
+    font-family: 'Mountains of Christmas', cursive;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff !important;
+}
+.navbar-brand:hover {
+    color: #f0f0f0 !important;
+}
+.btn-primary {
+    background-color: #d92323; /* Vermelho-Natalino */
+    border-color: #d92323;
+}
+.btn-primary:hover, .btn-primary:active {
+    background-color: #b01a1a !important;
+    border-color: #a01818 !important;
+}
+.btn-success {
+    background-color: #f0b400; /* Dourado */
+    border-color: #f0b400;
+    color: #212529;
+}
+.btn-success:hover, .btn-success:active {
+    background-color: #dba300 !important;
+    border-color: #c79500 !important;
+    color: #212529 !important;
+}
+.text-success {
+    color: #d92323 !important; /* Vermelho-Natalino (preços) */
+}
+
+/* --- Estilos do Mini-Carrinho (Sidebar) --- */
+.cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+.cart-sidebar { position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; height: 100%; background-color: white; box-shadow: -4px 0 10px rgba(0,0,0,0.1); z-index: 999; transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; }
+.cart-overlay.is-open { opacity: 1; visibility: visible; }
+.cart-sidebar.is-open { transform: translateX(0); }
+.cart-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #eee; }
+#cart-close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888; padding: 0; line-height: 1; }
+#cart-close-btn:hover { color: #000; }
+.cart-items-list { flex-grow: 1; overflow-y: auto; padding: 0.5rem 1.25rem; }
+.cart-item { display: flex; gap: 15px; padding: 1rem 0; border-bottom: 1px solid #f0f0f0; }
+.cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 4px; }
+.cart-item-info { flex-grow: 1; }
+.cart-item-info h4 { margin: 0 0 5px 0; font-size: 1em; font-weight: 600; }
+.cart-item-info p { margin: 0 0 10px 0; color: #666; font-size: 0.9em; }
+.cart-item-controls { display: flex; align-items: center; gap: 10px; }
+.cart-qty-btn { background-color: #eee; color: #333; border: none; width: 28px; height: 28px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+.cart-qty-btn:hover { background-color: #ddd; }
+.cart-item-price { text-align: right; display: flex; flex-direction: column; align-items: flex-end; }
+.cart-item-price p { margin: 0; font-weight: bold; font-size: 1.1em; }
+.cart-remove-btn { background: none; border: none; color: #dc3545; font-size: 0.9em; cursor: pointer; padding: 5px 0 0 0; }
+.cart-remove-btn:hover { text-decoration: underline; }
+.cart-footer { padding: 1.25rem; border-top: 1px solid #eee; background-color: #f9f9f9; }
+.cart-total { display: flex; justify-content: space-between; font-size: 1.3em; font-weight: bold; margin-bottom: 1rem; }
+#cart-empty-msg { padding: 40px 20px; text-align: center; color: #777; }
+.link-produto { text-decoration: none; color: #212529; }
+.link-produto:hover { color: #0d6efd; }
+
+/* --- Estilos da Galeria de Produtos --- */
+.thumbnail-item { transition: border-color 0.2s ease, opacity 0.2s ease; border: 2px solid transparent; opacity: 0.7; cursor: pointer; }
+.thumbnail-item:hover { opacity: 1; border-color: #0d6efd; }
+.thumbnail-item.active { opacity: 1; border-color: #0d6efd; box-shadow: 0 0 5px rgba(13, 110, 253, 0.5); }
+
+/* --- ESTILOS DO BADGE DE DESCONTO --- */
+.card { position: relative; overflow: hidden; }
+.sale-badge { position: absolute; top: 10px; right: 10px; z-index: 10; background-color: #d92323; color: white; font-weight: bold; font-size: 0.9rem; padding: 0.25rem 0.5rem; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.sale-badge-large { position: absolute; top: 15px; left: 15px; z-index: 10; background-color: #d92323; color: white; font-weight: bold; font-size: 1.2rem; padding: 0.5rem 1rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+
+/* --- NOVOS ESTILOS - CATEGORIAS E FOOTER --- */
+/* 1. Seção de Categorias */
+.category-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    background-color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    color: #212529;
+}
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    color: #212529;
+}
+.category-icon {
+    font-size: 3rem;
+    color: #2a7d2e; /* Verde-Pinheiro */
+}
+
+/* 2. Rodapé (Footer) */
+.footer-custom {
+    padding: 3rem 0;
+    color: rgba(255, 255, 255, 0.7); /* Texto branco com transparência */
+}
+.footer-custom h5 {
+    color: #f0b400; /* Dourado */
+    font-weight: bold;
+    margin-bottom: 1.2rem;
+    font-family: 'Mountains of Christmas', cursive;
+    font-size: 1.8rem;
+}
+.footer-custom a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.footer-custom a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+.footer-custom .list-unstyled li {
+    margin-bottom: 0.5rem;
+}
+.footer-social-icons a {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 0;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+/* --- !!! NOVO ESTILO - BARRA DE FRETE GRÁTIS !!! --- */
+
+.promo-bar {
+    /* Usamos a cor dourada (btn-success) que já definimos */
+    background-color: #f0b400; 
+    /* Usamos a cor do texto do btn-success */
+    color: #212529; 
+    text-align: center;
+    padding: 0.5rem 0.75rem; /* 8px 12px */
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+
+
+
+/*testeeeeeeeeee
+
+
+
+
+/* --- !!! NOVOS ESTILOS - CHECKOUT !!! --- */
+
+/* 1. Estilos do Passo-a-Passo (Stepper) */
+.checkout-stepper {
+    display: flex;
+    justify-content: space-around;
+    padding: 0;
+    margin-bottom: 2.5rem;
+    list-style: none;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1rem;
+}
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #6c757d; /* Cinza (Inativo) */
+    font-weight: 500;
+}
+.step.active {
+    color: #2a7d2e; /* Verde-Pinheiro (Ativo) */
+    font-weight: 700;
+}
+.step-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9ecef; /* Fundo cinza claro */
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    border: 2px solid #e9ecef;
+}
+.step.active .step-icon {
+    background-color: #2a7d2e; /* Fundo Verde */
+    color: #ffffff; /* Ícone Branco */
+    border-color: #2a7d2e;
+}
+.step.completed .step-icon {
+    background-color: #ffffff;
+    color: #2a7d2e; /* Ícone Verde */
+    border-color: #2a7d2e;
+}
+
+/* 2. Estilos do Resumo do Pedido com Imagem */
+.summary-item {
+    display: flex;
+    align-items: center;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+.summary-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.summary-item-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    margin-right: 15px;
+}
+.summary-item-details {
+    flex-grow: 1;
+}
+.summary-item-details h6 {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+.summary-item-details small {
+    color: #6c757d;
+}
+.summary-item-price {
+    font-weight: 600;
+    color: #212529;
+    margin-left: 1rem;
+}
