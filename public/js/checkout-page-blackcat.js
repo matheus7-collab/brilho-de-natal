@@ -1,25 +1,20 @@
 // ===============================================
-// ARQUIVO: public/js/checkout-page-blackcat.js (Corrigido)
+// ARQUIVO: public/js/checkout-page-blackcat.js
+// (Tentativa 4: Enviando dados brutos + token)
 // ===============================================
 
-// --- INICIALIZAÇÃO E CARREGAMENTO DO RESUMO ---
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Carrega o resumo do pedido
     loadCheckoutSummary();
 
     // 2. Inicializa o BlackCatPay com sua Chave Pública
-    // !!! VOCÊ JÁ FEZ CERTO, MANTENHA SUA CHAVE AQUI !!!
-    const BLACKCAT_PUBLIC_KEY = 'pk_IOmbGd9TuyA74r51JDxK8mCpTTqIbI1XfBZpqPi6_4MRomXU'; 
-
-    // !!! LINHA 'IF' DE VERIFICAÇÃO REMOVIDA DAQUI !!!
-    
-    // Configura a chave no BlackCat
+    const BLACKCAT_PUBLIC_KEY = 'pk_IOmbGd9TuyA74r51JDxK8mCpTTqIbI1XfBZpqPi6_4MRomXU'; // <<< SUA CHAVE JÁ ESTÁ CORRETA
     try {
         BlackCatPay.setPublicKey(BLACKCAT_PUBLIC_KEY);
     } catch (e) {
-        console.error("Erro ao configurar a Chave Pública do BlackCat:", e);
-        showError("Erro fatal na configuração de pagamento. Verifique a Chave Pública.");
-        return; // Para a execução se a chave for inválida
+        console.error("Erro fatal na configuração de pagamento:", e);
+        showError("Erro fatal na configuração de pagamento.");
+        return;
     }
 
     // 3. Pega os elementos do formulário
@@ -51,35 +46,33 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 async function handlePayWithCard() {
     console.log("Iniciando pagamento com Cartão...");
-    setLoading(true, 'pay-with-card-button', 'Tokenizando...');
+    setLoading(true, 'pay-with-card-button', 'Processando...');
 
     try {
-        // 1. Coletar dados do cliente (Nome, Email, CPF)
         const customerData = getCustomerData();
-        if (!customerData.cpf) {
-             throw new Error("CPF/CNPJ é obrigatório.");
-        }
+        if (!customerData.cpf) { throw new Error("CPF/CNPJ é obrigatório."); }
 
-        // 2. Coletar dados do cartão
+        // 1. Coletar dados do cartão (os dados brutos)
         const cardData = {
             holderName: document.getElementById('cardHolderName').value,
-            number: document.getElementById('cardNumber').value.replace(/\s/g, ''), // Remove espaços
+            number: document.getElementById('cardNumber').value.replace(/\s/g, ''),
             expMonth: parseInt(document.getElementById('cardExpMonth').value),
             expYear: parseInt(document.getElementById('cardExpYear').value),
             cvv: document.getElementById('cardCvv').value
         };
 
-        // 3. Gerar o Token seguro (como na documentação)
+        // 2. Gerar o Token (vamos enviar os dois, por via das dúvidas)
         console.log("Criptografando cartão...");
         const token = await BlackCatPay.encrypt(cardData);
         console.log("Token gerado:", token);
 
-        // 4. Enviar os dados para o NOSSO servidor
+        // 3. Enviar os dados para o NOSSO servidor
         const payload = {
             paymentMethod: 'credit_card',
             customer: customerData,
             cart: getCart(),
-            cardToken: token // Envia o token seguro, não os dados do cartão
+            cardToken: token,       // Enviando o Token
+            cardData: cardData        // <<< MUDANÇA: Enviando os dados brutos do cartão
         };
 
         const response = await fetch('/pagar-com-blackcat', {
@@ -89,18 +82,15 @@ async function handlePayWithCard() {
         });
 
         const data = await response.json();
-
-        if (!response.ok) {
-            // Se o NOSSO servidor ou o BlackCat der erro
-            throw new Error(data.error || 'Erro desconhecido no pagamento.');
+        if (!response.ok) { 
+            // O erro "Requisição com valores inválidos" virá daqui
+            throw new Error(data.error || 'Erro desconhecido no pagamento.'); 
         }
 
-        // 5. Pagamento Aprovado! (Status 'paid')
+        // 5. Pagamento Aprovado!
         console.log("Pagamento aprovado!", data);
-        // Limpa o carrinho do localStorage
-        localStorage.removeItem('cart');
-        // Redireciona para a página de Obrigado
-        window.location.href = '/obrigado'; 
+        localStorage.removeItem('cart'); // Limpa o carrinho
+        window.location.href = '/obrigado'; // Redireciona
 
     } catch (error) {
         console.error('Erro no pagamento com cartão:', error);
@@ -117,13 +107,11 @@ async function handlePayWithPix() {
     setLoading(true, 'pay-with-pix-button', 'Gerando PIX...');
 
      try {
-        // 1. Coletar dados do cliente (Nome, Email, CPF)
         const customerData = getCustomerData();
         if (!customerData.cpf) {
              throw new Error("CPF/CNPJ é obrigatório para gerar o PIX.");
         }
         
-        // 2. Enviar os dados para o NOSSO servidor
         const payload = {
             paymentMethod: 'pix',
             customer: customerData,
@@ -137,12 +125,10 @@ async function handlePayWithPix() {
         });
 
         const data = await response.json();
-
         if (!response.ok) {
             throw new Error(data.error || 'Erro desconhecido ao gerar PIX.');
         }
 
-        // 3. Sucesso! O servidor enviou os dados do PIX
         console.log("PIX gerado:", data);
         showPixModal(data.pix.qrcode, data.pix.copiaCola);
         setLoading(false, 'pay-with-pix-button', 'Pagar com PIX');
@@ -156,40 +142,25 @@ async function handlePayWithPix() {
 
 // --- FUNÇÕES AUXILIARES ---
 
-/**
- * Pega o carrinho do localStorage
- */
 function getCart() {
     return JSON.parse(localStorage.getItem('cart') || '{}');
 }
 
-/**
- * Pega os dados do cliente do formulário
- */
 function getCustomerData() {
     return {
         nome: document.getElementById('nome').value,
         email: document.getElementById('email').value,
-        cpf: document.getElementById('cpf').value.replace(/\D/g, '') // Remove pontos/traços
+        cpf: document.getElementById('cpf').value.replace(/\D/g, '')
     };
 }
 
-/**
- * Mostra o Modal do PIX com o QR Code e Copia/Cola
- */
 function showPixModal(qrCodeBase64, copiaCola) {
     const qrContainer = document.getElementById('pix-qrcode-container');
     const copiaColaText = document.getElementById('pix-copia-cola');
     const copyButton = document.getElementById('copy-pix-button');
     
-    // (A documentação do BlackCat não é clara se 'qrcode' é o texto ou uma imagem base64)
-    // Vamos assumir que é o CÓDIGO (Copia e Cola)
-    
     qrContainer.innerHTML = `<p class="text-muted small">Não foi possível gerar a imagem do QR Code. Use o Copia e Cola abaixo.</p>`;
-    // (Se um dia descobrirmos que é uma imagem:
-    // qrContainer.innerHTML = `<img src="data:image/png;base64,${qrCodeBase64}" class="img-fluid">`;)
-
-    copiaColaText.value = copiaCola; // O código 'pix.qrcode' da documentação
+    copiaColaText.value = copiaCola;
 
     copyButton.addEventListener('click', () => {
         copiaColaText.select();
@@ -201,14 +172,8 @@ function showPixModal(qrCodeBase64, copiaCola) {
     const modalElement = document.getElementById('pixModal');
     const modal = new bootstrap.Modal(modalElement);
     modal.show();
-    
-    // (Em uma versão futura, adicionaríamos um "listener" aqui para verificar o /blackcat-webhook)
-    // (Por enquanto, o cliente paga e o admin confere o status no painel)
 }
 
-/**
- * Controla o estado de carregamento dos botões
- */
 function setLoading(isLoading, buttonId, loadingText) {
     const button = document.getElementById(buttonId);
     if (!button) return;
@@ -228,9 +193,6 @@ function setLoading(isLoading, buttonId, loadingText) {
     if(otherButton) otherButton.disabled = isLoading;
 }
 
-/**
- * Mostra uma mensagem de erro na página
- */
 function showError(message) {
     const errorMessage = document.getElementById('error-message');
     if (!errorMessage) return;
@@ -238,9 +200,6 @@ function showError(message) {
     errorMessage.classList.remove('d-none');
 }
 
-/**
- * Carrega o resumo do pedido (código que tínhamos antes)
- */
 async function loadCheckoutSummary() {
     const itemsContainer = document.getElementById('order-summary-items');
     const totalPriceElement = document.getElementById('order-total-price');
